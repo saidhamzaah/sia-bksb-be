@@ -4,40 +4,27 @@ const bcrypt = require("bcrypt");
 const { body } = require("express-validator");
 
 module.exports = {
-  register: (body) => {
+  register: (setData) => {
     return new Promise((resolve, reject) => {
-      bcrypt.genSalt(10, function (err, salt) {
-        const { password } = body;
-        bcrypt.hash(password, salt, function (err, hashedPassword) {
-          const newBody = {
-            userEmail: body.email,
-            userName: body.username,
-            userPassword: hashedPassword,
-            role_id: body.role,
-          };
-          if (err) {
-            reject(err);
-          }
-          const query = "INSERT INTO tb_user SET?";
-          db.query(query, newBody, (err, data) => {
-            if (!err) {
-              resolve(newBody);
-            } else {
-              reject(err);
-            }
-          });
-        });
+      const query = "INSERT INTO tb_user SET?";
+      db.query(query, setData, (err, result) => {
+        // console.log(query, setData, "masuk model");
+        if (!err) {
+          resolve(result);
+        } else {
+          reject(new Error(err));
+        }
       });
     });
   },
 
   login: (body) => {
     return new Promise((resolve, reject) => {
-      const { username, password } = body;
-      const userName = body.username;
+      const { userEmailorName, userPassword } = body;
+      const userId = body.userEmailorName;
 
-      const query = `Select * from tb_user where userName=?`;
-      db.query(query, userName, (err, data) => {
+      const query = `Select * from tb_user where userEmail='${userId}' or userName='${userId}'`;
+      db.query(query, (err, data) => {
         let dataUser = data[0];
         if (!data.length) {
           reject("Username or Password Invalid");
@@ -45,19 +32,21 @@ module.exports = {
           if (!err) {
             const token = jwt.sign(
               {
-                username: dataUser.userName,
+                userName: dataUser.userName,
+                userEmail: dataUser.userEmail,
                 roleId: dataUser.role_id,
+                isActive: dataUser.isActive,
               },
               process.env.SECRET_KEY
             );
             // console.log(dataUser, "ini token");
             // console.log(password, "ini token", dataUser.userPassword);
             bcrypt.compare(
-              password,
+              userPassword,
               dataUser.userPassword,
               function (err, result) {
+                // console.log(userPassword, dataUser.userPassword,"masuk model")
                 if (err) {
-                  console.log("err pertama");
                   reject("Email or Password Invalid");
                 } else {
                   if (!result) {
@@ -78,6 +67,19 @@ module.exports = {
           } else {
             reject(err);
           }
+        }
+      });
+    });
+  },
+  authchecker: (body) => {
+    return new Promise((resolve, reject) => {
+      const userEmail = body.userEmail;
+      const query = `Select * from tb_user where userEmail='${userEmail}'`;
+      db.query(query, (err, data) => {
+        if (!err) {
+          resolve(data);
+        } else {
+          reject(err);
         }
       });
     });
