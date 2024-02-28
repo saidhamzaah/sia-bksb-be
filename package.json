@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+    "build": "webpack --config webpack.config.js",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -19,5 +20,18 @@
   },
   "main": "index.js",
   "author": "Sleepy Dog",
-  "license": "ISC"
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "webpack-cli": "^5.1.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/saidhamzaah/sia-bksb-be.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/saidhamzaah/sia-bksb-be/issues"
+  },
+  "homepage": "https://github.com/saidhamzaah/sia-bksb-be#readme"
 }
