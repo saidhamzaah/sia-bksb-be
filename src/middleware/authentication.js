@@ -96,7 +96,7 @@ module.exports = {
       if (err) {
         return res.sendStatus(403);
       }
-      console.log(user.roleId, "token");
+      // console.log(token, "token");
       if (user.roleId === 100) {
        return res.sendStatus(403);
       }
@@ -107,7 +107,6 @@ module.exports = {
   },
   authorization: (req, res, next) => {
     const token = req.token;
-    console.log("role = 100");
     console.log(token.roleId);
     if (token.role === 100) {
       res.sendStatus(403);

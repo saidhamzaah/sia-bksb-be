@@ -22,7 +22,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const { userEmailorName, userPassword } = body;
       const userId = body.userEmailorName;
-
+      // console.log(body)
       const query = `Select * from tb_user where userEmail='${userId}' or userName='${userId}'`;
       db.query(query, (err, data) => {
         let dataUser = data[0];
@@ -73,8 +73,22 @@ module.exports = {
   },
   authchecker: (body) => {
     return new Promise((resolve, reject) => {
+      // console.log(body,"model")
       const userEmail = body.userEmail;
       const query = `Select * from tb_user where userEmail='${userEmail}'`;
+      db.query(query, (err, data) => {
+        if (!err) {
+          resolve(data);
+        } else {
+          reject(err);
+        }
+      });
+    });
+  },
+  authidtaker: (data) => {
+    return new Promise((resolve, reject) => {
+      const userEmail = body.userEmail;
+      const query = `SELECT id FROM tb_user WHERE userEmail='${data}' OR userName= '${data}'`;
       db.query(query, (err, data) => {
         if (!err) {
           resolve(data);
